@@ -1,0 +1,36 @@
+[Unit]
+Description=Bodhi MCP Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+DynamicUser=yes
+WorkingDirectory=/opt/mcp-servers/bodhi
+ExecStart=/opt/mcp-servers/bodhi/venv/bin/mcp-bodhi \
+  --bodhi-server https://bodhi.fedoraproject.org
+Restart=always
+RestartSec=3
+
+# Full security hardening
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+NoNewPrivileges=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+
+# Read-only filesystem
+ReadOnlyPaths=/opt/mcp-servers/bodhi
+
+[Install]
+WantedBy=multi-user.target
