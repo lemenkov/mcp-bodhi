@@ -22,8 +22,11 @@ class BodhiClient:
         """
         Query updates from Bodhi.
         
+        NOTE: Bodhi API does not support combining 'user' with 'packages' filters.
+        If both are provided, 'user' will be ignored and only 'packages' will be used.
+
         Args:
-            user: Filter by username
+            user: Filter by username (ignored if packages is also specified)
             packages: Filter by package name
             status: Filter by status (pending, testing, stable, etc.)
             releases: Filter by release (F40, F41, etc.)
@@ -38,10 +41,14 @@ class BodhiClient:
             "page": page,
         }
         
-        if user:
-            params["user"] = user
+        # Bodhi API limitation: cannot combine user + packages filters
+        # Prioritize packages filter over user filter
         if packages:
             params["packages"] = packages
+            # Do NOT add user parameter when packages is specified
+        elif user:
+            params["user"] = user
+
         if status:
             params["status"] = status
         if releases:
