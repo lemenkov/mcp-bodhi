@@ -9,7 +9,7 @@ mcp = FastMCP("Bodhi MCP Server")
 bodhi_client = BodhiClient()
 
 
-@mcp.tool()
+@mcp.tool(annotations={"readOnlyHint": True, "openWorldHint": True}, tags={"read"})
 async def list_updates(
     user: str | None = None,
     packages: str | None = None,
@@ -52,7 +52,7 @@ async def list_updates(
     return response
 
 
-@mcp.tool()
+@mcp.tool(annotations={"readOnlyHint": True, "openWorldHint": True}, tags={"read"})
 async def get_update(update_id: str) -> str:
     """
     Get details for a specific update by ID.
@@ -79,7 +79,7 @@ async def get_update(update_id: str) -> str:
     return response
 
 
-@mcp.tool()
+@mcp.tool(annotations={"readOnlyHint": True, "openWorldHint": True}, tags={"read"})
 async def list_releases() -> str:
     """List all Fedora releases."""
     result = await bodhi_client.get_releases()
@@ -95,7 +95,7 @@ async def list_releases() -> str:
     return response
 
 
-@mcp.tool()
+@mcp.tool(annotations={"readOnlyHint": True, "openWorldHint": True}, tags={"read"})
 async def get_comments(update_id: str) -> str:
     """
     Get comments for a specific update.
