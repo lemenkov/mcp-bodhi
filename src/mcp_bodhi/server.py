@@ -19,7 +19,7 @@ async def list_updates(
 ) -> str:
     """
     List Bodhi updates with optional filters.
-    
+
     Args:
         user: Filter by username
         packages: Filter by package name
@@ -34,12 +34,12 @@ async def list_updates(
         releases=releases,
         rows_per_page=min(rows_per_page, 100),
     )
-    
+
     updates = result.get("updates", [])
     total = result.get("total", 0)
-    
+
     response = f"Found {total} total updates. Showing {len(updates)} results:\n\n"
-    
+
     for update in updates:
         response += f"**{update.get('alias')}**\n"
         response += f"  Title: {update.get('title')}\n"
@@ -48,7 +48,7 @@ async def list_updates(
         if update.get('date_submitted'):
             response += f"  Submitted: {update.get('date_submitted')}\n"
         response += "\n"
-    
+
     return response
 
 
@@ -56,26 +56,26 @@ async def list_updates(
 async def get_update(update_id: str) -> str:
     """
     Get details for a specific update by ID.
-    
+
     Args:
         update_id: Update ID (e.g., FEDORA-2024-abc123)
     """
     result = await bodhi_client.get_update(update_id)
     update = result.get("update", {})
-    
+
     response = f"**{update.get('alias')}**\n\n"
     response += f"Title: {update.get('title')}\n"
     response += f"Status: {update.get('status')}\n"
     response += f"Type: {update.get('type')}\n"
     response += f"Karma: {update.get('karma', 0)}\n"
     response += f"Submitted: {update.get('date_submitted')}\n"
-    
+
     if update.get('notes'):
         response += f"\nNotes:\n{update.get('notes')}\n"
-    
+
     if update.get('bugs'):
         response += f"\nBugs: {', '.join([str(b.get('bug_id')) for b in update.get('bugs', [])])}\n"
-    
+
     return response
 
 
@@ -84,14 +84,14 @@ async def list_releases() -> str:
     """List all Fedora releases."""
     result = await bodhi_client.get_releases()
     releases = result.get("releases", [])
-    
+
     response = f"Found {len(releases)} releases:\n\n"
-    
+
     for release in releases:
         response += f"**{release.get('name')}** - {release.get('state')}\n"
         if release.get('long_name'):
             response += f"  {release.get('long_name')}\n"
-    
+
     return response
 
 
@@ -133,10 +133,10 @@ def main():
     parser.add_argument("--port", type=int, default=8801,
                        help="Port to listen on")
     args = parser.parse_args()
-    
+
     global bodhi_client
     bodhi_client = BodhiClient(base_url=args.bodhi_server)
-    
+
     # Run the server
     mcp.run(transport="http", host=args.host, port=args.port)
 
