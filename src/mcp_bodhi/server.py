@@ -1,5 +1,6 @@
 """MCP server for Fedora Bodhi."""
 import argparse
+import httpx
 from fastmcp import FastMCP
 from .client import BodhiClient
 
