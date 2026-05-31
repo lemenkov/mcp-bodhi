@@ -60,7 +60,15 @@ async def get_update(update_id: str) -> str:
     Args:
         update_id: Update ID (e.g., FEDORA-2024-abc123)
     """
-    result = await bodhi_client.get_update(update_id)
+    try:
+        result = await bodhi_client.get_update(update_id)
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code == 404:
+            return f"Update '{update_id}' not found. Use list_updates to find the correct alias."
+        return f"Bodhi API error: {e.response.status_code} {e.response.reason_phrase}"
+    except httpx.RequestError as e:
+        return f"Network error connecting to Bodhi: {e}"
+
     update = result.get("update", {})
 
     response = f"**{update.get('alias')}**\n\n"
